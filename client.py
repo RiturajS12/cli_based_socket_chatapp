@@ -5,7 +5,7 @@ name = input("Enter your name:")
 
 
 client = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-client.connect(("192.168.57.132",5550))
+client.connect(("223.228.253.116",5550))
 
 client.send(name.encode())
 
