@@ -3,7 +3,7 @@ from threading import Thread
 
 
 server = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-server.bind(("192.168.57.132",5550))
+server.bind(("0.0.0.0",5550))
 
 server.listen()
 all_clients = {}
