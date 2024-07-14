@@ -4,8 +4,8 @@ from threading import Thread
 name = input("Enter your name:")
 
 
-client = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-client.connect(("223.228.253.116",5550))
+client = socket.socket(socket.AF_INET6,socket.SOCK_STREAM)
+client.connect(("2409:408a:1bb0:caa6:acb4:46be:34cb:3dba",5550))
 
 client.send(name.encode())
 
