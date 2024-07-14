@@ -2,8 +2,8 @@ import socket
 from threading import Thread
 
 
-server = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-server.bind(("0.0.0.0",5550))
+server = socket.socket(socket.AF_INET6,socket.SOCK_STREAM)
+server.bind(("2409:408a:1bb0:caa6:acb4:46be:34cb:3dba",5550))
 
 server.listen()
 all_clients = {}
