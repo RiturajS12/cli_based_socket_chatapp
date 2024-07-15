@@ -3,7 +3,7 @@ from threading import Thread
 
 
 server = socket.socket(socket.AF_INET6,socket.SOCK_STREAM)
-server.bind(("2409:408a:1bb0:caa6:acb4:46be:34cb:3dba",5550))
+server.bind(("2409:408a:1bb0:caa6:4d38:6cc0:644a:31db",5550))
 
 server.listen()
 all_clients = {}
@@ -15,6 +15,7 @@ def client_thread(client):
             for c in all_clients:
                 c.send(msg)
         except:
+            name = all_clients[client]
             for c in all_clients:
                 if c != client:
                     c.send(f"{name} has left the room!".encode())
