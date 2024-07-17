@@ -1,15 +1,14 @@
 import socket
 from threading import Thread
-import struct
 from PIL import Image
-import io
+import struct
 
-name = input("Enter your name:")
+name = input("Enter your name: ")
 
 client = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
-client.connect(("2409:408a:1bb0:caa6:746f:f475:57e8:60c4", 5550))
+client.connect(("localhost", 5550))
 
-client.send(name.encode())
+client.send(name.encode('utf-8'))
 
 def send(client):
     while True:
@@ -17,41 +16,27 @@ def send(client):
         
         if choice == 't':
             message = input("Enter your message: \n")
-            data = f'{name}:{message}'
+            data = f'{name}: {message}'
             msg_type = 1
-            msg_length = len(data.encode())
+            msg_length = len(data.encode('utf-8'))
             header = struct.pack('!II', msg_type, msg_length)
-            client.send(header + data.encode())
+            client.send(header + data.encode('utf-8'))
         
         elif choice == 'i':
             image_path = input("Enter the path to the image: \n")
-            try:
-                with Image.open(image_path) as img:
-                    img_byte_arr = io.BytesIO()
-                    img.save(img_byte_arr, format=img.format)
-                    img_data = img_byte_arr.getvalue()
-
-                    msg_type = 2
-                    msg_length = len(img_data)
-                    header = struct.pack('!II', msg_type, msg_length)
-                    client.send(header + img_data)
-                    print("Image sent successfully")
-            except Exception as e:
-                print(f"Failed to send image: {e}")
+            msg_type = 2
+            msg_length = len(image_path.encode('utf-8'))
+            header = struct.pack('!II', msg_type, msg_length)
+            client.send(header + image_path.encode('utf-8'))
+            print("Image path sent successfully")
 
         elif choice == 'p':
             pdf_path = input("Enter the path to the PDF: \n")
-            try:
-                with open(pdf_path, 'rb') as file:
-                    pdf_data = file.read()
-
-                    msg_type = 3
-                    msg_length = len(pdf_data)
-                    header = struct.pack('!II', msg_type, msg_length)
-                    client.send(header + pdf_data)
-                    print("PDF sent successfully")
-            except Exception as e:
-                print(f"Failed to send PDF: {e}")
+            msg_type = 3
+            msg_length = len(pdf_path.encode('utf-8'))
+            header = struct.pack('!II', msg_type, msg_length)
+            client.send(header + pdf_path.encode('utf-8'))
+            print("PDF path sent successfully")
 
         else:
             print("Invalid choice. Please enter 't' for text, 'i' for image, or 'p' for PDF.")
@@ -64,10 +49,20 @@ def receive(client):
                 raise ConnectionResetError
             
             msg_type, msg_length = struct.unpack('!II', header)
-            data = client.recv(msg_length).decode()
-            
-            print(data)
-        except:
+            msg = client.recv(msg_length)
+
+            if msg_type == 2:
+                print(f"Received an image!")
+                image_path = msg.decode('utf-8')
+                img = Image.open(image_path)
+                img.show()
+            elif msg_type == 3:
+                    print(f"Received: {msg.decode('utf-8')}")
+            else:
+                print(msg.decode('utf-8'))
+
+        except Exception as e:
+            print(f"Connection error: {e}")
             client.close()
             break
 
